@@ -1,6 +1,27 @@
 import fs from 'fs'
-import { calculateFileHash, calculateFileHashByPath, calculateFileAdler32 } from '../md5'
-import { CHUNK_SIZE } from '../common'
+import { calculateFileHash, calculateFileHashByPath, RollChecksum } from '../md5'
+import { CHUNK_SIZE } from '../constants'
+import { isDirectory } from '../file'
+import { getRelativePath } from '@/utils'
+
+export const genAllCheckSums = (folderPath, relative, checksumsMap) => {
+  if (isDirectory(folderPath)) {
+    const files = fs.readdirSync(folderPath).filter((v) => !v.startsWith('.'))
+    for (const file of files) {
+      const absolutePath = `${folderPath}/${file}`
+      if (isDirectory(absolutePath)) {
+        genAllCheckSums(absolutePath, relative, checksumsMap)
+      } else {
+        const name = getRelativePath(absolutePath, relative)
+        if (name !== '') {
+          checksumsMap[name] = {
+            blockChecksums: genFileCheckSums({ name, filePath: absolutePath })
+          }
+        }
+      }
+    }
+  }
+}
 export const genFileCheckSums = ({ name, filePath }) => {
   return {
     name,
@@ -24,8 +45,7 @@ export const generateBlockChecksums = (filePath) => {
 // 分段读取文件内容
 const readChunk = (allData, offset, list) => {
   const length = allData.length
-  console.log('checksum计算时间')
-  console.time('timer')
+
   while (offset < length) {
     // 处理读取的数据
     list.push(genBlockChecksums({ allData, index: list.length, offset }))
@@ -33,14 +53,13 @@ const readChunk = (allData, offset, list) => {
     // 更新下次读取的起始位置
     offset += CHUNK_SIZE
   }
-  console.timeEnd('timer')
 }
 
 export const genBlockChecksums = ({ allData, index, offset }) => {
   const buf = allData.slice(offset, offset + CHUNK_SIZE)
   return {
     strongChecksum: calculateFileHash(buf),
-    weakChecksum: calculateFileAdler32(buf),
+    weakChecksum: new RollChecksum().update(buf).getValue(),
     index,
     offset,
     size: buf.length

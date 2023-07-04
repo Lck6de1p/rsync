@@ -1,9 +1,9 @@
 import { dialog, shell } from 'electron'
 import fs from 'fs'
-import { join } from 'path'
+import path, { join } from 'path'
 import store from './store'
-import { ROOT_KEY, ROOT_FOLDER_NAME } from '@/common'
-
+import { ROOT_KEY, ROOT_FOLDER_NAME } from '@/common/index.js'
+import { TEMP_FOLDER_NAME, SYNC_FOLDER_NAME } from './constants'
 // 通过对话框选择文件夹并创建root文件夹
 const createRootFolder = async () => {
   // 打开文件夹选择对话框
@@ -11,10 +11,15 @@ const createRootFolder = async () => {
 
   if (!res.canceled) {
     let folderPath = `${res.filePaths[0]}/${ROOT_FOLDER_NAME}`
-    createFolderByPath('', folderPath)
     store.set(ROOT_KEY, folderPath)
-    return { folderPath, isEmpty: checkFolderForFiles(folderPath) }
+    initRootFolder(folderPath)
   }
+}
+
+// 初始化根文件夹
+const initRootFolder = (folderPath) => {
+  fs.mkdirSync(`${folderPath}/${TEMP_FOLDER_NAME}`, { recursive: true })
+  fs.mkdirSync(`${folderPath}/${SYNC_FOLDER_NAME}`, { recursive: true })
 }
 
 // 是否为文件夹
@@ -32,13 +37,6 @@ const fileExistsSync = (filePath) => {
 // 删除文件夹
 const fileRmdirSync = (filePath) => {
   fs.rmdirSync(filePath)
-}
-
-// 判断文件夹下是否有文件
-const checkFolderForFiles = (folderPath) => {
-  // 读取文件夹中的内容
-  const files = fs.readdirSync(folderPath)
-  return files.length === 0
 }
 
 // 创建文件夹
@@ -92,6 +90,43 @@ const appendFileSync = (filePath, content) => {
   fs.appendFileSync(filePath, content)
 }
 
+const writeFileSync = (filePath, content) => {
+  fs.writeFileSync(filePath, content)
+}
+
+const copyFile = (src, target) => {
+  fs.copyFile(src, target, () => {})
+}
+
+const deleteFileSync = (filePath) => {
+  fs.unlinkSync(filePath)
+}
+
+const rename = (oldPath, newPath) => {
+  fs.rename(oldPath, newPath, (err) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+    console.log('文件重命名成功')
+  })
+}
+
+/**
+ * 同步拷贝文件，若不存在文件夹路径，则创建文件夹
+ * @param {*} sourceFilePath 资源文件路径
+ * @param {*} targetFilePath 目标文件路径
+ */
+const copyFileInDeepFolderSync = (sourceFilePath, targetFilePath) => {
+  const folderPath = path.dirname(targetFilePath)
+  // 创建缺少的文件夹路径
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true })
+  }
+
+  // 创建文件
+  fs.copyFileSync(sourceFilePath, targetFilePath)
+}
 export {
   createRootFolder,
   createFolderByPath,
@@ -101,5 +136,10 @@ export {
   fileRmdirSync,
   isDirectory,
   getFileSize,
-  appendFileSync
+  appendFileSync,
+  writeFileSync,
+  copyFile,
+  deleteFileSync,
+  rename,
+  copyFileInDeepFolderSync
 }

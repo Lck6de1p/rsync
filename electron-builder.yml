@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: electron-vite-test
+productName: 底稿
 directories:
   buildResources: build
 files:

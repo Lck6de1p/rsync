@@ -1,5 +1,8 @@
 import fs from 'fs'
 import archiver from 'archiver'
+import unzipper from 'unzipper'
+
+// 打包zip包
 export const zipFolder = (folderPath, zipFilePath) => {
   console.log('打包时间')
   console.time('zipTime')
@@ -24,4 +27,9 @@ export const zipFolder = (folderPath, zipFilePath) => {
     archive.directory(folderPath, false)
     archive.finalize()
   })
+}
+
+// zip包解压
+export const unzip = (path) => {
+  return fs.createReadStream(`${path}.zip`).pipe(unzipper.Extract({ path })).promise()
 }

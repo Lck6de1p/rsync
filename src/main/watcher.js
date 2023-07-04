@@ -1,44 +1,39 @@
 import chokidar from 'chokidar'
-import fs from 'fs'
-// // 监听文件修改事件
-// watcher.on('change', (filePath) => {
-//   console.log(`文件修改: ${filePath}`)
-// })
-
-// // 监听文件删除事件
-// watcher.on('unlink', (filePath) => {
-//   console.log(`文件删除: ${filePath}`)
-// })
-
-// 监听文件夹删除事件
-// watcher.on('addDir', (folderPath) => {
-//   console.log(`文件夹新增: ${folderPath}`)
-// })
-
-// // 监听文件夹删除事件
-// watcher.on('unlinkDir', (folderPath) => {
-//   console.log(`文件夹删除: ${folderPath}`)
-// })
-
-// // 监听错误事件
-// watcher.on('error', (error) => {
-//   console.error(`发生错误: ${error}`)
-// })
-
 class Watcher {
   constructor(folderPath) {
     this.folderPath = folderPath
+    this.isReady = false
     this.watcher = chokidar.watch(folderPath, {
+      ignored: /(^|[/\\])\../, // ignore dotfiles
+
       persistent: true
     })
     // 监听文件添加事件
-    this.watcher.on('add', (filePath) => {
-      if (fs.existsSync(filePath)) {
-        console.log(`File ${filePath} already exists. Skipping...`)
-        return
-      }
-      console.log(`文件添加: ${filePath}`)
-    })
+    this.watcher
+      // .on("addDir", (path) => log(`Directory ${path} has been added`))
+      // .on("unlinkDir", (path) => log(`Directory ${path} has been removed`))
+      // .on("error", (error) => log(`Watcher error: ${error}`))
+      .on('ready', () => (this.isReady = true))
+      .on('unlink', (path) => log(`file ${path} has been removed`)
+      .on('raw', (event, path, details) => {
+        // internal
+        if (this.isReady) {
+          console.log('Raw event info:', event, path, details)
+
+          switch (event) {
+            case 'addDir':
+              console.log('添加文件夹')
+            case 'unlinkDir':
+              console.log('删除文件夹')
+            case 'addDir':
+              console.log('添加文件夹')
+              break
+
+            default:
+              break
+          }
+        }
+      })
   }
   close() {
     this.watcher.close()

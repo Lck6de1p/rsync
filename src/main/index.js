@@ -4,7 +4,7 @@ import { join } from 'path'
 import fs from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import './websocket'
+import { initWebSocket, syncData2Server, syncData2Client } from './websocket'
 import {
   createRootFolder,
   changePermissionsRecursive,
@@ -108,6 +108,7 @@ function createWindow() {
 app.whenReady().then(() => {
   // 文件or文件夹操作
   ipcMain.handle('createRootFolder', createRootFolder)
+  ipcMain.handle('fileExistsSync', (_, filePath) => fileExistsSync(filePath))
 
   // store
   ipcMain.handle('getStoreKey', getStoreKey)
@@ -118,8 +119,10 @@ app.whenReady().then(() => {
 
   ipcMain.handle('changePermissionsRecursive', changePermissionsRecursive)
   ipcMain.handle('openFileByPath', openFileByPath)
-  ipcMain.handle('fileExistsSync', fileExistsSync)
   ipcMain.handle('createFolderByPath', createFolderByPath)
+  ipcMain.handle('initWebSocket', (_, filePath) => initWebSocket(filePath))
+  ipcMain.handle('syncData2Server', syncData2Server)
+  ipcMain.handle('syncData2Client', syncData2Client)
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
   // Default open or close DevTools by F12 in development

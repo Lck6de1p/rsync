@@ -14,6 +14,11 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('electronAPI', {
       createRootFolder: () => ipcRenderer.invoke('createRootFolder'),
       getStoreKey: (key) => ipcRenderer.invoke('getStoreKey', key),
+      fileExistsSync: (filePath) => ipcRenderer.invoke('fileExistsSync', filePath),
+      // 同步功能
+      initWebSocket: (filePath) => ipcRenderer.invoke('initWebSocket', filePath),
+      syncData2Server: () => ipcRenderer.invoke('syncData2Server'),
+      syncData2Client: () => ipcRenderer.invoke('syncData2Client'),
 
       updateFile: () => ipcRenderer.invoke('update:file'),
       changeFileStatus: (status) => ipcRenderer.invoke('changeStatus:file', status),
@@ -21,7 +26,6 @@ if (process.contextIsolated) {
       changePermissionsRecursive: (folderName, mode) =>
         ipcRenderer.invoke('changePermissionsRecursive', folderName, mode),
       openFileByPath: (filePath) => ipcRenderer.invoke('openFileByPath', filePath),
-      fileExistsSync: (filePath) => ipcRenderer.invoke('fileExistsSync', filePath),
       createFolderByPath: (filePath) => ipcRenderer.invoke('createFolderByPath', filePath),
       store: () => ipcRenderer.invoke('store'),
       choseDraft: (draftId) => ipcRenderer.send('chose-draft', draftId)

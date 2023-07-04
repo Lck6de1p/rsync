@@ -1,6 +1,6 @@
 {
-  "name": "electron-vite-test",
-  "version": "1.0.1",
+  "name": "manuscript",
+  "version": "1.0.0",
   "description": "An Electron application with Vue",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -16,16 +16,17 @@
     "build:win": "npm run build && electron-builder --win --config",
     "build:win64": "npm run build && electron-builder --win --x64 --config",
     "build:mac": "npm run build && electron-builder --mac --config",
-    "build:linux": "npm run build && electron-builder --linux --config"
+    "build:linux": "npm run build && electron-builder --linux --config",
+    "test": "vitest"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^1.0.3",
     "@electron-toolkit/utils": "^1.0.2",
-    "adler32": "^0.1.7",
     "archiver": "^5.3.1",
     "chokidar": "^3.5.3",
     "crypto": "^1.0.1",
     "electron-store": "^8.1.0",
+    "unzipper": "^0.10.14",
     "vue-router": "^4.2.2",
     "ws": "^8.13.0"
   },
