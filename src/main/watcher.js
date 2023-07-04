@@ -8,32 +8,37 @@ class Watcher {
 
       persistent: true
     })
+
     // 监听文件添加事件
     this.watcher
       // .on("addDir", (path) => log(`Directory ${path} has been added`))
       // .on("unlinkDir", (path) => log(`Directory ${path} has been removed`))
       // .on("error", (error) => log(`Watcher error: ${error}`))
       .on('ready', () => (this.isReady = true))
-      .on('unlink', (path) => log(`file ${path} has been removed`)
-      .on('raw', (event, path, details) => {
-        // internal
-        if (this.isReady) {
-          console.log('Raw event info:', event, path, details)
+      .on('unlink', (path) =>
+        console.log(`file ${path} has been removed`).on('raw', (event, path, details) => {
+          // internal
+          if (this.isReady) {
+            console.log('Raw event info:', event, path, details)
 
-          switch (event) {
-            case 'addDir':
-              console.log('添加文件夹')
-            case 'unlinkDir':
-              console.log('删除文件夹')
-            case 'addDir':
-              console.log('添加文件夹')
-              break
+            switch (event) {
+              case 'addDir':
+                console.log('添加文件夹')
+                break
+              case 'unlinkDir':
+                console.log('删除文件夹')
+                break
 
-            default:
-              break
+              case 'addDir1':
+                console.log('添加文件夹')
+                break
+
+              default:
+                break
+            }
           }
-        }
-      })
+        })
+      )
   }
   close() {
     this.watcher.close()
