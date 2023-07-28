@@ -10,9 +10,12 @@
   },
   "cSpell.words": [
     "composables",
+    "daterange",
     "electronjs",
     "npmrc",
     "nsis",
-    "vite"
+    "unref",
+    "vite",
+    "vueuse"
   ]
 }

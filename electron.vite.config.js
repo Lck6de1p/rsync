@@ -20,9 +20,20 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src'),
         '@views': resolve('src/renderer/src/views'),
         '@hooks': resolve('src/renderer/src/composables'),
-        '@': resolve('src')
+        '@': resolve('src'),
+        '@components': resolve('src/renderer/src/components'),
+        '@utils': resolve('src/renderer/src/utils')
       }
     },
-    plugins: [vue()]
+    plugins: [vue()],
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      }
+    }
   }
 })

@@ -22,10 +22,15 @@
   "dependencies": {
     "@electron-toolkit/preload": "^1.0.3",
     "@electron-toolkit/utils": "^1.0.2",
+    "@element-plus/icons-vue": "^2.1.0",
+    "@vueuse/core": "^10.2.1",
     "archiver": "^5.3.1",
     "chokidar": "^3.5.3",
     "crypto": "^1.0.1",
     "electron-store": "^8.1.0",
+    "element-plus": "^2.3.7",
+    "qs": "^6.11.2",
+    "sass": "^1.63.6",
     "unzipper": "^0.10.14",
     "vue-router": "^4.2.2",
     "ws": "^8.13.0"
